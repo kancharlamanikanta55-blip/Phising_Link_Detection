@@ -6,4 +6,4 @@ pydantic
 pandas
 tld
 xgboost
-scikit-learn
+
