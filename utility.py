@@ -104,34 +104,40 @@ def tld_length(tld):
 
 def main(url):
     status = []
+    
+    # 1-5
     status.append(having_ip_address(url))
     status.append(abnormal_url(url))
     status.append(count_dot(url))
     status.append(count_www(url))
     status.append(count_atrate(url))
+    
+    # 6-10
     status.append(no_of_dir(url))
     status.append(no_of_embed(url))
     status.append(shortening_service(url))
     status.append(count_https(url))
     status.append(count_http(url))
+    
+    # 11-15
     status.append(count_per(url))
     status.append(count_ques(url))
     status.append(count_hyphen(url))
     status.append(count_equal(url))
     status.append(url_length(url))
+    
+    # 16-21 (RE-ORDERED TO MATCH YOUR TRAINING DATA)
     status.append(hostname_length(url))
     status.append(suspicious_words(url))
-    status.append(digit_count(url))
-    status.append(letter_count(url))
-    status.append(fd_length(url))
+    status.append(fd_length(url)) # Moved up
     
-    # --- ADD THE FIX HERE ---
-    # This ensures tld doesn't crash if the user forgets to type http://
+    # Ensure URL has a scheme for tld extraction
     tld_input = url if url.startswith(('http://', 'https://')) else 'http://' + url
-    
     tld_val = get_tld(tld_input, fail_silently=True)
-    status.append(tld_length(tld_val))
-    # -------------------------
+    status.append(tld_length(tld_val)) # Moved up
     
+    status.append(digit_count(url)) # Moved down
+    status.append(letter_count(url)) # Moved down
     
     return status
+    
