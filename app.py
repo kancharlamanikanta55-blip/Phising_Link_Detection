@@ -13,7 +13,7 @@ st.title("🛡️ Phishing Link Detector")
 if not os.path.exists('model.pkl'):
     st.error("❌ Error: 'model.pkl' not found!")
 else:
-    try:
+   try:
     model = joblib.load('model.pkl')
     
     # This is the "Safety Valve"
@@ -63,5 +63,6 @@ else:
 
     except Exception as e:
         st.error(f"❌ An error occurred: {e}")
+
 
 
