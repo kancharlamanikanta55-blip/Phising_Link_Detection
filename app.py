@@ -13,17 +13,16 @@ st.title("🛡️ Phishing Link Detector")
 if not os.path.exists('model.pkl'):
     st.error("❌ Error: 'model.pkl' not found!")
 else:
-  try:
-    model = joblib.load('model.pkl')
-    
-    # This is the "Safety Valve"
-    # It checks if the model has the old 'use_label_encoder' attribute 
-    # and handles it so it doesn't crash during .predict()
-    if hasattr(model, "use_label_encoder"):
-        model.use_label_encoder = False 
+    try:
+        model = joblib.load('model.pkl')
         
-    st.success("✅ Model loaded successfully!")
+        # Safety check for the old attribute that caused the crash earlier
+        if hasattr(model, "use_label_encoder"):
+            model.use_label_encoder = False
+            
+        st.success("✅ Model loaded successfully!")
 
+        # --- MAKE SURE THIS SECTION IS ALIGNED ---
         url_input = st.text_input("Enter a URL to analyze:", placeholder="https://example.com")
 
         if st.button("Check URL"):
@@ -41,13 +40,8 @@ else:
                         'tld_length', 'count-digits', 'count-letters'
                     ]
                     
-                    # 3. Create DataFrame (XGBoost 3.2.0 needs this for accuracy)
+                    # 3. Create DataFrame
                     features_df = pd.DataFrame([features], columns=cols)
-                    
-                    # --- DEBUG SECTION ---
-                    st.write("### 🔍 Model Debug Info")
-                    st.write("Features extracted:", features_df)
-                    # ----------------------
                     
                     # 4. Predict
                     prediction = model.predict(features_df)
@@ -63,8 +57,3 @@ else:
 
     except Exception as e:
         st.error(f"❌ An error occurred: {e}")
-
-
-
-
-
