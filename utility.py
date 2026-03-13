@@ -14,9 +14,10 @@ def having_ip_address(url):
 
 def abnormal_url(url):
     hostname = urlparse(url).hostname
-    hostname = str(hostname)
-    match = re.search(hostname, url)
-    return 1 if match else 0
+    if not hostname:
+        return 1
+    # If the hostname is not found in the URL correctly, it's abnormal
+    return 0 if str(hostname) in url else 1
 
 def count_dot(url):
     return url.count('.')
@@ -124,7 +125,13 @@ def main(url):
     status.append(letter_count(url))
     status.append(fd_length(url))
     
-    tld_val = get_tld(url, fail_silently=True)
+    # --- ADD THE FIX HERE ---
+    # This ensures tld doesn't crash if the user forgets to type http://
+    tld_input = url if url.startswith(('http://', 'https://')) else 'http://' + url
+    
+    tld_val = get_tld(tld_input, fail_silently=True)
     status.append(tld_length(tld_val))
+    # -------------------------
+    
     
     return status
