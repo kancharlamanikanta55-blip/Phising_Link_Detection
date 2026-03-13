@@ -14,14 +14,15 @@ if not os.path.exists('model.pkl'):
     st.error("❌ Error: 'model.pkl' not found!")
 else:
     try:
-        # We use a special 'try-except' block specifically for the label encoder error
-        model = joblib.load('model.pkl')
+    model = joblib.load('model.pkl')
+    
+    # This is the "Safety Valve"
+    # It checks if the model has the old 'use_label_encoder' attribute 
+    # and handles it so it doesn't crash during .predict()
+    if hasattr(model, "use_label_encoder"):
+        model.use_label_encoder = False 
         
-        # This line forces the model to forget about the missing attribute
-        if hasattr(model, 'use_label_encoder'):
-             delattr(model, 'use_label_encoder')
-             
-        st.success("✅ Model loaded successfully!")
+    st.success("✅ Model loaded successfully!")
 
         url_input = st.text_input("Enter a URL to analyze:", placeholder="https://example.com")
 
@@ -62,4 +63,5 @@ else:
 
     except Exception as e:
         st.error(f"❌ An error occurred: {e}")
+
 
