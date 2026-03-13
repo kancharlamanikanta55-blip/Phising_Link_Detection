@@ -2,7 +2,7 @@ import re
 from urllib.parse import urlparse
 from tld import get_tld
 
-# --- FEATURE EXTRACTION FUNCTIONS ---
+# --- FIXED FEATURE FUNCTIONS ---
 
 def having_ip_address(url):
     match = re.search(
@@ -17,13 +17,8 @@ def abnormal_url(url):
     if not hostname:
         return 1
     hostname = str(hostname)
-    # Check if the hostname actually exists in the URL string
-    # If it is missing or scrambled, it's abnormal (1). Otherwise, it's normal (0).
     match = re.search(hostname, url)
-    if match:
-        return 0  # This is a normal, expected URL
-    else:
-        return 1  # Something is wrong with the URL structure
+    return 0 if match else 1  # 0 is SAFE, 1 is ABNORMAL
 
 def count_dot(url):
     return url.count('.')
@@ -80,18 +75,10 @@ def suspicious_words(url):
     return 1 if match else 0
 
 def digit_count(url):
-    digits = 0
-    for i in url:
-        if i.isnumeric():
-            digits += 1
-    return digits
+    return sum(c.isdigit() for c in url)
 
 def letter_count(url):
-    letters = 0
-    for i in url:
-        if i.isalpha():
-            letters += 1
-    return letters
+    return sum(c.isalpha() for c in url)
 
 def fd_length(url):
     urlpath = urlparse(url).path
@@ -100,50 +87,49 @@ def fd_length(url):
     except:
         return 0
 
-def tld_length(tld):
+def tld_length(tld_val):
     try:
-        return len(tld)
+        return len(tld_val)
     except:
         return -1
 
-# --- MAIN INTERFACE FUNCTION ---
+# --- THE INTERFACE (ORDERED EXACTLY FOR YOUR MODEL) ---
 
 def main(url):
     status = []
     
-    # 1-5
+    # Feature 1-5
     status.append(having_ip_address(url))
     status.append(abnormal_url(url))
     status.append(count_dot(url))
     status.append(count_www(url))
     status.append(count_atrate(url))
     
-    # 6-10
+    # Feature 6-10
     status.append(no_of_dir(url))
     status.append(no_of_embed(url))
     status.append(shortening_service(url))
     status.append(count_https(url))
     status.append(count_http(url))
     
-    # 11-15
+    # Feature 11-15
     status.append(count_per(url))
     status.append(count_ques(url))
     status.append(count_hyphen(url))
     status.append(count_equal(url))
     status.append(url_length(url))
     
-    # 16-21 (RE-ORDERED TO MATCH YOUR TRAINING DATA)
+    # Feature 16-21 (MATCHING YOUR X_TRAIN COLUMNS)
     status.append(hostname_length(url))
     status.append(suspicious_words(url))
-    status.append(fd_length(url)) # Moved up
+    status.append(fd_length(url))
     
-    # Ensure URL has a scheme for tld extraction
+    # TLD Extraction
     tld_input = url if url.startswith(('http://', 'https://')) else 'http://' + url
     tld_val = get_tld(tld_input, fail_silently=True)
-    status.append(tld_length(tld_val)) # Moved up
+    status.append(tld_length(tld_val))
     
-    status.append(digit_count(url)) # Moved down
-    status.append(letter_count(url)) # Moved down
+    status.append(digit_count(url))
+    status.append(letter_count(url))
     
     return status
-    
