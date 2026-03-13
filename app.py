@@ -22,7 +22,7 @@ else:
     if hasattr(model, "use_label_encoder"):
         model.use_label_encoder = False 
         
-    st.success("✅ Model loaded successfully!")
+      st.success("✅ Model loaded successfully!")
 
         url_input = st.text_input("Enter a URL to analyze:", placeholder="https://example.com")
 
@@ -63,6 +63,7 @@ else:
 
     except Exception as e:
         st.error(f"❌ An error occurred: {e}")
+
 
 
 
