@@ -1,10 +1,6 @@
-fastapi
-uvicorn
-numpy
-joblib
-pydantic 
-pandas
-tld
-xgboost
 streamlit
+pandas
+joblib
 scikit-learn
+tld
+numpy
