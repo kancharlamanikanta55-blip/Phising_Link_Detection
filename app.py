@@ -1,8 +1,9 @@
 import streamlit as st
 import joblib
 import numpy as np
-import pandas as pd  # <--- Added Pandas
+import pandas as pd
 import os
+import pkg_resources  # <--- Add this line
 from utility import main as extract_features
 
 st.set_page_config(page_title="Phishing Detector", layout="centered")
@@ -57,3 +58,4 @@ else:
 
     except Exception as e:
         st.error(f"❌ An error occurred: {e}")
+
