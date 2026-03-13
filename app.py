@@ -9,11 +9,18 @@ st.set_page_config(page_title="Phishing Detector", layout="centered")
 
 st.title("🛡️ Phishing Link Detector")
 
+# --- MODEL LOADING WITH FIX ---
 if not os.path.exists('model.pkl'):
     st.error("❌ Error: 'model.pkl' not found!")
 else:
     try:
+        # We use a special 'try-except' block specifically for the label encoder error
         model = joblib.load('model.pkl')
+        
+        # This line forces the model to forget about the missing attribute
+        if hasattr(model, 'use_label_encoder'):
+             delattr(model, 'use_label_encoder')
+             
         st.success("✅ Model loaded successfully!")
 
         url_input = st.text_input("Enter a URL to analyze:", placeholder="https://example.com")
@@ -55,3 +62,4 @@ else:
 
     except Exception as e:
         st.error(f"❌ An error occurred: {e}")
+
