@@ -16,8 +16,14 @@ def abnormal_url(url):
     hostname = urlparse(url).hostname
     if not hostname:
         return 1
-    # If the hostname is not found in the URL correctly, it's abnormal
-    return 0 if str(hostname) in url else 1
+    hostname = str(hostname)
+    # Check if the hostname actually exists in the URL string
+    # If it is missing or scrambled, it's abnormal (1). Otherwise, it's normal (0).
+    match = re.search(hostname, url)
+    if match:
+        return 0  # This is a normal, expected URL
+    else:
+        return 1  # Something is wrong with the URL structure
 
 def count_dot(url):
     return url.count('.')
